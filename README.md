@@ -48,7 +48,7 @@
 - Array of List
 - xlsx file
 - Java Swing
-
+- Maven
 
 ## Classes
 
@@ -89,9 +89,10 @@
 1. Clone the repository.
 2. Ensure you have Java installed.
 3. Run the `Main` class to start the program.
-
+4. Or just click the executable jar file which is compiled with Maven named "Hospital-Shift-Scheduler-1.0-SNAPSHOT-jar-with-dependencies.jar"
 
 
 ## File Structure
 - HospitalTaskScheduler\src\: source codes
 - HospitalTaskScheduler\lib\: Apache poi libraries for dealing with excel files.
+- \: executable jar file named Hospital-Shift-Scheduler-1.0-SNAPSHOT-jar-with-dependencies
