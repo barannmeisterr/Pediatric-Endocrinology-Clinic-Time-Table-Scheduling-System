@@ -65,11 +65,10 @@ public class Main {
         frame = new JFrame("Çocuk Endokrinoloji Nöbet Çizelgesi");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // frame.setSize(1500, 1000);
         frame.setLayout(new BorderLayout());
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        splitPane.setDividerLocation(500); // İkiye bölme konumu
+        splitPane.setDividerLocation(500); 
 
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new BorderLayout());
@@ -142,7 +141,7 @@ public class Main {
         doctorFields = new HashMap<>();
         yenidoganSchedule = new HashMap<>();
 
-        // Poliklinik seçimleri
+       
         JPanel clinicPanel = new JPanel();
         clinicPanel.setLayout(new GridLayout(6, 3));
 
@@ -219,11 +218,11 @@ public class Main {
         });
         leftPanel.add(submitAllButton, BorderLayout.SOUTH);
 
-        // Sağ panel (JTable)
+        
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BorderLayout());
 
-        // JTable oluşturma ve ayarları
+      
         tableModel = new DefaultTableModel();
         scheduleTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(scheduleTable);
@@ -333,7 +332,7 @@ public class Main {
    
 
     private void updateTable() {
-        tableModel.setRowCount(0); // Mevcut tüm satırları temizler
+        tableModel.setRowCount(0); 
 
         for (int i = 1; i <= timetable.size(); i++) {
             int day = i;
