@@ -1,0 +1,2 @@
+# Pediatric-Endocrinology-Clinic-Time-Table-Scheduling-System
+ This project is a friendly graphical user interface comprehensive scheduling system for a Pediatric Endocrinology Clinic. It leverages a Directed Graph data structure to efficiently model the complex relationships and constraints between doctors and their shifts. The system ensures that all constraints related to doctor-shift assignments are respected, providing an optimal and feasible schedule.Also generated optimal time table schedule extracted as excel xlsx file.
