@@ -8,9 +8,11 @@ import java.awt.*;
 import java.util.List;
 import java.util.Scanner;
 import java.awt.BorderLayout;
-import javax.swing.JFrame;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerListModel;
+
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -235,7 +237,86 @@ public class Main {
         tableModel.addColumn("KONSÜLTASYON");
         tableModel.addColumn("Servis");
         tableModel.addColumn("ENDOKRİN İÇİ");
-       
+        scheduleTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting())
+         { 
+                    int selectedRow = scheduleTable.getSelectedRow();
+                    if (selectedRow != -1) {
+                        DirectedGraphRepresentationRelationsAndConstraints selectedData = timetable.get(selectedRow);
+                      
+                    }
+                }
+            }
+        });
+        scheduleTable.getModel().addTableModelListener((TableModelListener) new TableModelListener() {
+            public void tableChanged(TableModelEvent e) {
+                if (e.getType() == TableModelEvent.UPDATE)
+         { 
+                    int row = e.getFirstRow();
+                    int column = e.getColumn();
+                   
+                    String newCellValue = (String) scheduleTable.getValueAt(row, column);
+              
+               if(isNameCorrect(newCellValue)) {
+            	   switch(column) {
+            	   case 1:
+            		  if(!isYesterdayYenidoganDay(row)) {
+            		   
+            		   timetable.get(row).changePol1(frame,newCellValue);
+                       
+                       updateTable();
+            		  }else {
+            			  timetable.get(row).changePol1(frame,newCellValue);
+                          timetable.get(row).changeMethodHelper(getYesterdayYenidoganDoctorName(row));
+                          updateTable();
+            			  
+            		  }
+                       
+                       break;
+            	   case 2:
+            		 
+            		   
+            		   
+            		   if(!isYesterdayYenidoganDay(row)) {
+                		   
+                		   timetable.get(row).changePol2(frame,newCellValue);
+                           
+                           updateTable();
+                		  }else {
+                			  timetable.get(row).changePol2(frame,newCellValue);
+                              timetable.get(row).changeMethodHelper(getYesterdayYenidoganDoctorName(row));
+                              updateTable();
+                			  
+                		  }
+                       break;
+            	   case 3:
+            		   if(!isYesterdayYenidoganDay(row)) {
+                		   
+                		   timetable.get(row).changePol3(frame,newCellValue);
+                           
+                           updateTable();
+                		  }else {
+                			  timetable.get(row).changePol3(frame,newCellValue);
+                              timetable.get(row).changeMethodHelper(getYesterdayYenidoganDoctorName(row));
+                              updateTable();
+                			  
+                		  }
+            		   break;
+            	   default:
+            		   JOptionPane.showMessageDialog(frame, "Bu Alan Düzenlenemez! " );
+            		   updateTable();
+            		   return;
+            	   }
+               }else {
+            	   JOptionPane.showMessageDialog(frame, "Lütfen Doktorun İsmini Doğru Giriniz!");
+            	   updateTable();
+            	   return;
+               }
+                }
+            }
+        });
         rightPanel.add(scrollPane, BorderLayout.CENTER);
         exportButton = new JButton("Excel'e Kaydet");
         exportButton.addActionListener(new ActionListener() {
@@ -254,7 +335,18 @@ public class Main {
 
         frame.setVisible(true);
     }
-
+private boolean isYesterdayYenidoganDay(int currentIndex) {
+	if(currentIndex==0 || !timetable.get(currentIndex - 1).isYenidoganDay()) {
+		return false;
+	}
+return true;
+}
+private String getYesterdayYenidoganDoctorName(int currentIndex) {
+	if(isYesterdayYenidoganDay(currentIndex) && currentIndex!=0) {
+		return timetable.get(currentIndex - 1).getYenidoganDoctorAfterAssignShifts().getNameSurname();
+	}
+return "";
+}
     private void renderShiftInputs(int shiftCount) {
         shiftsPanel.removeAll();
         GridBagConstraints gbc = new GridBagConstraints();
@@ -326,11 +418,12 @@ public class Main {
         d2 = dp2.isSelected();
         d3 = dp3.isSelected();
     }
-
-    
-
-   
-
+private boolean isNameCorrect(String name) {
+	if(name.equals("TANER BARAN") || name.equals("SERPİL BAŞ") || name.equals("YUSUF CÜREK") || name.equals("GAMZE ÇELMELİ") || name.equals("MÜGE ATAR") || name.equals("DOĞA TÜRKKAHRAMAN")) {
+		return true;
+	}
+return false;
+}
     private void updateTable() {
         tableModel.setRowCount(0); 
 
@@ -348,7 +441,7 @@ public class Main {
             
             Object[] rowData = {day,pol1, pol2, pol3, yenidogan,icap,kons,service,endokrin};
             tableModel.addRow(rowData);
-        }
+        }    
     }
 
     public static void main(String[] args) {
