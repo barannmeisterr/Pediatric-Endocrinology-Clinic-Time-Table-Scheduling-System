@@ -1,5 +1,12 @@
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.util.List;
+import java.util.ArrayList;
+;
+
 /*
  * Title: DirectedGraphRepresentationRelationsAndConstraints Class
  * Author: Arda Baran
@@ -304,6 +311,33 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	return notWorkOnPolikinliks;
 
 	}
+	public Doctors[] getDoctorsNotWorkPolikinliksButAvailableThisMonth() {
+	    Doctors[] allDoctors = getDoctors();
+	    List<Doctors> notWorkOnPolikinliks = new ArrayList<>();
+	    
+	    for (Doctors doc : allDoctors) {
+	        if ((!adjMatrixForConnections[doc.getDoctorId()][getSpecificShift("POLİKLİNİK 1").getShiftId()]
+	            && !adjMatrixForConnections[doc.getDoctorId()][getSpecificShift("POLİKLİNİK 2").getShiftId()]
+	            && !adjMatrixForConnections[doc.getDoctorId()][getSpecificShift("POLİKLİNİK 3").getShiftId()]
+	            && findNumOfPolikinliksDoctorHas(doc) != 0)) {
+	                
+	            notWorkOnPolikinliks.add(doc);	
+	        }
+	    }
+
+	    // Listeyi diziye çevir
+	    Doctors[] resultArray = new Doctors[notWorkOnPolikinliks.size()];
+	    return notWorkOnPolikinliks.toArray(resultArray);
+	}
+public boolean isThereADoctorNotAvailableInThisMonth() {
+	for(Doctors d : getDoctors()) {
+		if(findNumOfPolikinliksDoctorHas(d)==0) {
+			return true;
+		}
+	
+	}
+return false;
+}
 	public Doctors[] getTwoDifferentDoctorsNotWorkingAtPolikinliks() {
 		//----------------------------------------------------
 		/*Summary:returns two different doctors between the doctors that not assigned to pol1 or pol2 or pol3
@@ -313,8 +347,15 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 		
 		
 		
-	    Doctors[] notWorkOnPolikinliks = getDoctorsWhoDoesNotWorkAtPolikinliks();
-
+	    Doctors[] notWorkOnPolikinliks; 
+	    		
+	    if(isThereADoctorNotAvailableInThisMonth()) {
+	    	notWorkOnPolikinliks=getDoctorsNotWorkPolikinliksButAvailableThisMonth();
+	    }else {
+	    
+	    notWorkOnPolikinliks = getDoctorsWhoDoesNotWorkAtPolikinliks();
+	    }
+	    
 	    // Ensure we have at least two doctors who do not work at polikinliks
 	    if (notWorkOnPolikinliks.length < 2) {
 	        System.out.println("There are not enough doctors who do not work at polikinliks.");
@@ -565,12 +606,13 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    } while (kons == yenidogan);
 	    addEdge(kons, shifts[5]);
 
+	    if(!isThereADoctorNotAvailableInThisMonth()) {
 	    Doctors service;
 	    do {
 	        service = getRandomDoctorForService();
 	    } while (service == yenidogan);
 	    addEdge(service, shifts[6]);
-
+	    }
 	    Doctors endokrin;
 	    do {
 	        endokrin = getRandomDoctorForEndokrin();
@@ -612,7 +654,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	}
 	public void testPolikinlikStatus() {
 		
-	doctors[0].setPolikinlik1Status(true);
+	doctors[0].setPolikinlik1Status(false);
 	doctors[0].setPolikinlik2Status(false);
 	doctors[0].setPolikinlik3Status(false);
 
@@ -622,7 +664,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	doctors[1].setPolikinlik3Status(false);
 
 
-	doctors[2].setPolikinlik1Status(false);
+	doctors[2].setPolikinlik1Status(true);
 	doctors[2].setPolikinlik2Status(true);
 	doctors[2].setPolikinlik3Status(false);
 
@@ -635,7 +677,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	doctors[4].setPolikinlik3Status(true);
 
 
-	doctors[5].setPolikinlik1Status(false);
+	doctors[5].setPolikinlik1Status(true);
 	doctors[5].setPolikinlik2Status(false);
 	doctors[5].setPolikinlik3Status(true);	    
 	}
@@ -726,6 +768,17 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	        }
 	    }
 	}
+public int probabilityHelper(Doctors doctor) {
+	switch(findNumOfPolikinliksDoctorHas(doctor)) {
+	case 1:
+		return 1;
+	case 2: case 3 :
+		return 2;
+		default:
+			return 3;		
+	}
+}
+	
 	public Doctors getRandomDoctorFromPol3() {
 		//--------------------------------------------------------	  
 		//Summary:Selects one doctor between the doctors registered to pol3  by considering constraints for pol3 shift
@@ -739,7 +792,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    // calculate total weight
 	    int totalWeight = 0;
 	    for (Doctors doctor : pol3Doctors) {
-	        totalWeight += (3 - doctor.getNumOfPolikinlikDoctorHas());  
+	        totalWeight += (3 - probabilityHelper(doctor));  
 	        //weight is inversely proportinal to the number of outpatient clinics the doctor has
 	    }
 
@@ -750,7 +803,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    // choice doctor according to the random number
 	    int currentWeightSum = 0;
 	    for (Doctors doctor : pol3Doctors) {
-	        currentWeightSum += (3 - doctor.getNumOfPolikinlikDoctorHas());
+	        currentWeightSum += (3 - probabilityHelper(doctor));
 	        if (randomWeight < currentWeightSum) {
 	            return doctor;
 	        }
@@ -774,7 +827,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    // Calculate total weight
 	    int totalWeight = 0;
 	    for (Doctors doctor : pol2Doctors) {
-	        totalWeight += (3 - doctor.getNumOfPolikinlikDoctorHas()); 
+	        totalWeight += (3 - probabilityHelper(doctor)); 
 	      //weight is inversely proportinal to the number of outpatient clinics the doctor has
 	    }
 
@@ -785,7 +838,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    
 	    int currentWeightSum = 0;
 	    for (Doctors doctor : pol2Doctors) {
-	        currentWeightSum += (3 - doctor.getNumOfPolikinlikDoctorHas());
+	        currentWeightSum += (3 - probabilityHelper(doctor));
 	        if (randomWeight < currentWeightSum) {
 	            return doctor;
 	        }
@@ -808,7 +861,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	   
 	    int totalWeight = 0;
 	    for (Doctors doctor : pol1Doctors) {
-	        totalWeight += (3 - doctor.getNumOfPolikinlikDoctorHas()); 
+	        totalWeight += (3 - probabilityHelper(doctor)); 
 	      //weight is inversely proportinal to the number of outpatient clinics the doctor has
 	    }
 
@@ -819,7 +872,7 @@ public class DirectedGraphRepresentationRelationsAndConstraints {
 	    
 	    int currentWeightSum = 0;
 	    for (Doctors doctor : pol1Doctors) {
-	        currentWeightSum += (3 - doctor.getNumOfPolikinlikDoctorHas());
+	        currentWeightSum += (3 - probabilityHelper(doctor));
 	        if (randomWeight < currentWeightSum) {
 	            return doctor;
 	        }
@@ -1098,7 +1151,143 @@ public String toString() {
             getServiceDoctorNameAfterAssignShifts(),
             getEndokrinDoctorNameAfterAssignShifts());
 }
+public boolean isYenidoganDay() {
+	if(getYenidoganDoctorAfterAssignShifts()==null) {
+		return false;
+	}
+return true;
+}
+	
+	
+
+
+public void changePol1(JFrame frame,String doctorName) {
+	//--------------------------------------------------
+	//Summary: changes pol1 doctor after timetable is generated then updates kons,service and endokrin shifts
+	//--------------------------------------------------						
+if(getSpecificDoctor(doctorName).equals(getPolikinlik2DoctorAfterAssignShifts()) ||getSpecificDoctor(doctorName).equals(getPolikinlik3DoctorAfterAssignShifts()) ) {
+	 JOptionPane.showMessageDialog(frame, doctorName+" bugün diğer polikinlikte halihazırda çalışıyor bu yüzden polikinlik 1'e atanamaz!" );
+	return;
+}
+
+
+	Doctors p1OldDoc=getPolikinlik1DoctorAfterAssignShifts();
+	removeEdge(p1OldDoc,shifts[0]);
+addEdge(getSpecificDoctor(doctorName),shifts[0]);
+
+Doctors konsOld= getKonsDoctorAfterAssignShifts();
+removeEdge(konsOld,shifts[5]);
+
+Doctors serviceOld= getServiceDoctorAfterAssignShifts();
+removeEdge(serviceOld,shifts[6]);
+
+Doctors endokrinOld= getEndokrinDoctorAfterAssignShifts();
+removeEdge(endokrinOld,shifts[7]);
+
+
+Doctors kons = getRandomDoctorForKons();
+
+addEdge(kons,shifts[5]);
+
+Doctors service = getRandomDoctorForService();
+addEdge(service,shifts[6]);
+
+Doctors endokrin = getRandomDoctorForEndokrin();
+addEdge(endokrin,shifts[7]);
+
+
+}
+public void changePol2(JFrame frame,String doctorName) {
+	//--------------------------------------------------
+	//Summary: changes pol2 doctor after timetable is generated then updates kons,service and endokrin shifts 
+	//--------------------------------------------------						
+	if(getSpecificDoctor(doctorName).equals(getPolikinlik1DoctorAfterAssignShifts()) ||getSpecificDoctor(doctorName).equals(getPolikinlik3DoctorAfterAssignShifts()) ) {
+		 JOptionPane.showMessageDialog(frame, doctorName+" bugün diğer polikinlikte halihazırda çalışıyor bu yüzden polikinlik 2'ye atanamaz!" );	
+		return;
+	}
+
+	
+	
+	
+	Doctors p2OldDoc=getPolikinlik2DoctorAfterAssignShifts();
+	removeEdge(p2OldDoc,shifts[1]);
+addEdge(getSpecificDoctor(doctorName),shifts[1]);
+
+Doctors konsOld= getKonsDoctorAfterAssignShifts();
+removeEdge(konsOld,shifts[5]);
+
+Doctors serviceOld= getServiceDoctorAfterAssignShifts();
+removeEdge(serviceOld,shifts[6]);
+
+Doctors endokrinOld= getEndokrinDoctorAfterAssignShifts();
+removeEdge(endokrinOld,shifts[7]);
+
+
+Doctors kons = getRandomDoctorForKons();
+
+addEdge(kons,shifts[5]);
+
+Doctors service = getRandomDoctorForService();
+addEdge(service,shifts[6]);
+
+Doctors endokrin = getRandomDoctorForEndokrin();
+addEdge(endokrin,shifts[7]);
+}
+public void changePol3(JFrame frame,String doctorName) {
+	//--------------------------------------------------
+	//Summary: changes pol3 doctor after timetable is generated then updates kons,service and endokrin shifts
+	//--------------------------------------------------						
+	if(getSpecificDoctor(doctorName).equals(getPolikinlik1DoctorAfterAssignShifts()) ||getSpecificDoctor(doctorName).equals(getPolikinlik2DoctorAfterAssignShifts()) ) {
+		 JOptionPane.showMessageDialog(frame, doctorName+" bugün diğer polikinlikte halihazırda çalışıyor bu yüzden polikinlik 3'e atanamaz!" );		
+		return;
+	}	
+
+	Doctors p3OldDoc=getPolikinlik3DoctorAfterAssignShifts();
+	removeEdge(p3OldDoc,shifts[2]);
+addEdge(getSpecificDoctor(doctorName),shifts[2]);
+
+Doctors konsOld= getKonsDoctorAfterAssignShifts();
+removeEdge(konsOld,shifts[5]);
+
+Doctors serviceOld= getServiceDoctorAfterAssignShifts();
+removeEdge(serviceOld,shifts[6]);
+
+Doctors endokrinOld= getEndokrinDoctorAfterAssignShifts();
+removeEdge(endokrinOld,shifts[7]);
+
+
+Doctors kons = getRandomDoctorForKons();
+
+addEdge(kons,shifts[5]);
+
+Doctors service = getRandomDoctorForService();
+addEdge(service,shifts[6]);
+
+Doctors endokrin = getRandomDoctorForEndokrin();
+addEdge(endokrin,shifts[7]);
+}
+public void removeEdge(Doctors doctor,Shift shift) {
+	if(doctor==null || shift==null) {
+		return ;
+	}	
+	adjMatrixForConnections[doctor.getDoctorId()][shift.getShiftId()]=false;	
+}
+public void changeMethodHelper(String name) {
+if(name.equals("") ) {
+	return;
+}
+	
+	
+	if(getSpecificDoctor(name).equals(getKonsDoctorAfterAssignShifts())) {
+	removeEdge(getKonsDoctorAfterAssignShifts(),shifts[5]);
+}
+ if(getSpecificDoctor(name).equals(getServiceDoctorAfterAssignShifts())) {
+	 removeEdge(getServiceDoctorAfterAssignShifts(),shifts[6]);
+ }
+}
 
 	}
+
+
 
 
