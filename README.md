@@ -54,7 +54,7 @@
 - Maven
 - Boolean Algebra
 - Apache Poi
-
+- JDK 21
 ## Classes
 
 ### Course Class
