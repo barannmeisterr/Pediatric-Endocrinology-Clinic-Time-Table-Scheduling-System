@@ -13,7 +13,7 @@
 - **Dynamic JTable:** Allows editing only in specific columns (clinic preferences), ensuring data integrity while providing flexibility.
 - **Doctor Shift Scheduling:** Users can assign shifts to doctors with the option to select year,month, and specific days for yenidogan shift.
 - **Automated Updates:** Easily exports the generated schedule to an Excel file for further use or printing.
-- 
+  
 ## Constant Doctors
 
 - TANER BARAN --- Doctor ID: 0
