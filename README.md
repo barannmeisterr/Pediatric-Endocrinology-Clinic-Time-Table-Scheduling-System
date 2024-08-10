@@ -9,8 +9,11 @@
 - **Constraints Handling:** Incorporates constraints such as non-overlapping shifts, rest periods, and specific shift preferences.
 - **Optimal Scheduling:** Provides an optimal schedule considering all the constraints and preferences.
 - **Excel Export:** Extracts the created timetable schedule as an Excel file.
-- **Gui Support:** Provides friendly graphical user interface.
-
+- **User-Friendly GUI Support:** Features a clean and intuitive graphical user interface built with Java Swing for easy interaction.
+- **Dynamic JTable:** Allows editing only in specific columns (clinic preferences), ensuring data integrity while providing flexibility.
+- **Doctor Shift Scheduling:** Users can assign shifts to doctors with the option to select year,month, and specific days for yenidogan shift.
+- **Automated Updates:** Easily exports the generated schedule to an Excel file for further use or printing.
+- 
 ## Constant Doctors
 
 - TANER BARAN --- Doctor ID: 0
@@ -49,6 +52,8 @@
 - xlsx file
 - Java Swing
 - Maven
+- Boolean Algebra
+- Apache Poi
 
 ## Classes
 
